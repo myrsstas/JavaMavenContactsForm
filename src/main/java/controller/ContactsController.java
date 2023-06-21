@@ -63,6 +63,31 @@ public class ContactsController implements AutoCloseable{
 
     public ContactModel save(ContactModel contactModel) {
 
+        String name = null;
+        String surname= null;
+        String dateOfBirth = null;
+        int phoneNumber = 0000000000;
+        String email = null;
+        String address = null;
+        String city = null;
+        String notes = null;
+
+        //name ? "" :
+
+
+            try {
+
+            String query = "insert into contacts (name, surname, date_of_birth, phone_number, email, address, city, notes) \" +\n" +
+                    " values('\"+ name +\"' , '\" + surname + \"','\" + dateOfBirth + \"','\" + phoneNumber + \"','\" + email + \"','\" + address + \"','\" + city + \"','\" + notes + \"'); \"";
+            this.statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
 
         return contactModel;
     }
