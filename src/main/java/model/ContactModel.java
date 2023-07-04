@@ -6,8 +6,8 @@ public class ContactModel {
     private Integer id;
     private String name;
     private String surname;
-    private Date dateOfBirth;
-    private Integer phoneNumber;
+    private String dateOfBirth;
+    private String phoneNumber;
     private String email;
     private String address;
     private String city;
@@ -37,19 +37,19 @@ public class ContactModel {
         this.surname = surname;
     }
 
-    public Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Integer getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -88,7 +88,7 @@ public class ContactModel {
     public ContactModel() {
     }
 
-    public ContactModel(Integer id, String name, String surname, Date dateOfBirth, Integer phoneNumber, String email, String address, String city, String notes) {
+    public ContactModel(Integer id, String name, String surname, String dateOfBirth, String phoneNumber, String email, String address, String city, String notes) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -99,4 +99,6 @@ public class ContactModel {
         this.city = city;
         this.notes = notes;
     }
+
+    //TODO: make a list of strings for txt file
 }
