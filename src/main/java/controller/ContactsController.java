@@ -20,6 +20,8 @@ public class ContactsController implements AutoCloseable {
     private ContactList contactListView;
     private AddContact addContactView;
 
+    
+
     private Statement statement = null;
 
 
@@ -77,7 +79,7 @@ public class ContactsController implements AutoCloseable {
         return new ArrayList<>();
     }
     //control model object
-    public void getContactModel (String name , String surname, String dateOfBirth, String phoneNumber, String email, String address, String city, String notes){
+    /*public void getContactModel (String name , String surname, String dateOfBirth, String phoneNumber, String email, String address, String city, String notes){
         contactModel.getName();
         contactModel.getSurname();
         contactModel.getDateOfBirth();
@@ -87,7 +89,33 @@ public class ContactsController implements AutoCloseable {
         contactModel.getCity();
         contactModel.getNotes();
 
+    }*/
+
+    public String getContactName(){
+        return contactModel.getName();
     }
+    public String getContactSurname(){
+        return contactModel.getSurname();
+    }
+    public String getContactDateOfBirth(){
+        return contactModel.getDateOfBirth();
+    }
+    public String getContactPhoneNumber(){
+        return contactModel.getPhoneNumber();
+    }
+    public String getContactEmail(){
+        return contactModel.getEmail();
+    }
+    public String getContactAddress(){
+        return contactModel.getAddress();
+    }
+    public String getContactCity(){
+        return contactModel.getCity();
+    }
+    public String getContactNotes(){
+        return contactModel.getNotes();
+    }
+
 
     //control view object
     public void updateView(){
@@ -107,7 +135,7 @@ public class ContactsController implements AutoCloseable {
         String notes = null;
 
         //TODO: check if textboxes have text in them
-        //nameText= "" ? name = "-" : name = nameText  ;
+        //contactModel.getName()= " " ? name = "-" : name = nameText  ;
         //surnameText= "" ? surname = "-" :surname = surnameText;
 
         String query = "insert into contacts (name, surname, date_of_birth, phone_number, email, address, city, notes)  values(?, ?, ?, ?, ?, ?, ?, ?  )";
