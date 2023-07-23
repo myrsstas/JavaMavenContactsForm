@@ -3,19 +3,18 @@ package view;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import controller.ContactsController;
+import model.ContactModel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactList extends JFrame {
     private JPanel ContactListPanel;
@@ -23,7 +22,9 @@ public class ContactList extends JFrame {
     private JTable contactsTable;
     private JButton exportDataButton;
 
-    public ContactList() {
+    private final ContactsController contactsController;
+
+    public ContactList(final ContactsController contactsController) {
 
         setContentPane(ContactListPanel);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -31,6 +32,8 @@ public class ContactList extends JFrame {
         setVisible(true);
         setSize(700, 600);
 
+        this.contactsController = contactsController;
+        this.loadDataToView();
         //TODO: load data from db
 
         addContactButton.addActionListener(e -> {
@@ -79,8 +82,30 @@ public class ContactList extends JFrame {
 
     }
 
+    private void loadDataToView() {
+        final List<ContactModel> contacts = this.contactsController.getAll();
+
+        final String[] dataOfRow = new String[]{"id", "name"};
+
+        final List<Object[]> data = new ArrayList<>();
+        data.add(new Object[]{"1", "LalakisGR"});
+        data.add(new Object[]{"1", "LalakisGR"});
+        data.add(new Object[]{"1", "LalakisGR"});
+        data.add(new Object[]{"1", "LalakisGR"});
+        for (final ContactModel contact : contacts) {
+            final Integer id = contact.getId();
+            final String name = contact.getName();
+
+            data.add(new Object[]{id, name});
+        }
+
+        final Object[][] dataArray = data.toArray(Object[][]::new);
+        final DefaultTableModel defaultTableModel = new DefaultTableModel(dataArray, dataOfRow);
+        contactsTable.setModel(defaultTableModel);
+    }
+
     private void openNextForm() {
-        new AddContact();
+        new AddContact(contactsController);
         this.setVisible(false);
         this.dispose();
     }

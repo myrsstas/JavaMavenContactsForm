@@ -1,10 +1,6 @@
 package controller;
 
 import model.ContactModel;
-import config.DBConfig;
-import view.AddContact;
-import view.ContactList;
-import view.StartPage;
 
 import javax.swing.*;
 import java.io.File;
@@ -15,39 +11,37 @@ import java.util.List;
 
 public class ContactsController implements AutoCloseable {
     private final Connection connection;
-    private ContactModel contactModel;
-    private StartPage startPageView;
-    private ContactList contactListView;
-    private AddContact addContactView;
-
-    
-
-    private Statement statement = null;
-
 
     public ContactsController(final String connString) throws SQLException {
-            // create a connection to the database
-        connection = DriverManager.getConnection(DBConfig.connectionString);
+        // create a connection to the database
+        connection = DriverManager.getConnection(connString);
         //connection.Open();-> den uparxei
         //Statement query = connection.createStatement();
 
     }
 
     public void deleteAll() throws SQLException {
-        String query = "Delete from contacts;" +
-                "DELETE FROM SQLITE_SEQUENCE WHERE name='contacts'";
+        final String query = "DELETE FROM contacts";
 
-        PreparedStatement ps = connection.prepareStatement(query);
+        final PreparedStatement ps = connection.prepareStatement(query);
         ps.executeUpdate();
         //statement.executeQuery(query);
 
+    }
+
+    public void resetAutoIncrement() throws SQLException {
+        final String query = "DELETE FROM SQLITE_SEQUENCE WHERE name='contacts'";
+
+        final PreparedStatement ps = connection.prepareStatement(query);
+        ps.executeUpdate();
+        //statement.executeQuery(query);
     }
 
     public List<ContactModel> getAll() {
         List<ContactModel> contacts = new ArrayList<ContactModel>();
         try {
             String query = "SELECT * FROM contacts";
-            this.statement = connection.createStatement();
+            final Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while(resultSet.next()){
 
@@ -78,50 +72,6 @@ public class ContactsController implements AutoCloseable {
 
         return new ArrayList<>();
     }
-    //control model object
-    /*public void getContactModel (String name , String surname, String dateOfBirth, String phoneNumber, String email, String address, String city, String notes){
-        contactModel.getName();
-        contactModel.getSurname();
-        contactModel.getDateOfBirth();
-        contactModel.getPhoneNumber();
-        contactModel.getEmail();
-        contactModel.getAddress();
-        contactModel.getCity();
-        contactModel.getNotes();
-
-    }*/
-
-    public String getContactName(){
-        return contactModel.getName();
-    }
-    public String getContactSurname(){
-        return contactModel.getSurname();
-    }
-    public String getContactDateOfBirth(){
-        return contactModel.getDateOfBirth();
-    }
-    public String getContactPhoneNumber(){
-        return contactModel.getPhoneNumber();
-    }
-    public String getContactEmail(){
-        return contactModel.getEmail();
-    }
-    public String getContactAddress(){
-        return contactModel.getAddress();
-    }
-    public String getContactCity(){
-        return contactModel.getCity();
-    }
-    public String getContactNotes(){
-        return contactModel.getNotes();
-    }
-
-
-    //control view object
-    public void updateView(){
-        //addContact.nextEntry
-    }
-
 
     public ContactModel save(ContactModel contactModel) {
 
