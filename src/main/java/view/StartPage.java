@@ -2,15 +2,18 @@ package view;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import config.DBConfig;
+import controller.ContactsController;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
 
 public class StartPage extends JFrame {
+
+    private final ContactsController contactsController;
 
     private JButton letsStartButton;
     private JTextField uploadedFilePath;
@@ -18,49 +21,55 @@ public class StartPage extends JFrame {
     private JButton uploadButton;
     private JPanel startPagePanel;
 
-    public StartPage() {
+    public StartPage(final ContactsController contactsController) {
 
-        //JFrame frame = new JFrame("Start Page");
         setContentPane(startPagePanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         pack();
         setVisible(true);
 
-        //final JFrame thisView = this;
-
-        browseButton.addActionListener(e -> {
-            //TODO: open window dialog to search for file to upload
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Text File", "txt", "text"));
-            int response = fileChooser.showOpenDialog(null); //select file to open
-            if (response == JFileChooser.APPROVE_OPTION) {
-                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
-                //JOptionPane.showMessageDialog(null, file , "InfoBox: Title" , JOptionPane.INFORMATION_MESSAGE);
-                uploadedFilePath.setText(String.valueOf(file));
-            }
-        });
-        uploadButton.addActionListener(e -> {
-            //TODO: "upload" file to db
-
-            //open next form (Contact List)
-            new ContactList().setVisible(true);
-
-        });
+        this.contactsController = contactsController;
 
         letsStartButton.addActionListener(e -> openNextForm());
+
+        browseButton.addActionListener(e -> chooseFileFromUser());
+
+        uploadButton.addActionListener(e -> {
+            uploadFileToDatabase();
+            openNextForm();
+        });
+
+    }
+
+    private void chooseFileFromUser() {
+        //open window dialog to search for file to upload
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text File", "txt", "text"));
+        final int response = fileChooser.showOpenDialog(null); //select file to open
+        if (response != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        uploadedFilePath.setText(fileChooser.getSelectedFile().getAbsolutePath());
+    }
+
+    private void uploadFileToDatabase() {
+        final File fileToUpload = new File(uploadedFilePath.getText());
+        contactsController.insertFromFile(fileToUpload);
     }
 
     private void openNextForm() {
-        new ContactList();
+        new ContactList(this.contactsController);
         this.setVisible(false);
         this.dispose();
 
     }
 
-    public static void main(String[] args) {
-       new StartPage();
+    public static void main(String[] args) throws SQLException {
+        final ContactsController contactsController = new ContactsController(DBConfig.connectionString);
+        new StartPage(contactsController);
     }
 
 
@@ -101,6 +110,7 @@ public class StartPage extends JFrame {
         uploadButton = new JButton();
         uploadButton.setText("Upload");
         startPagePanel.add(uploadButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label2.setLabelFor(uploadedFilePath);
     }
 
     /**

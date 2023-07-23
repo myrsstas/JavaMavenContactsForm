@@ -13,12 +13,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import controller.ContactsController;
 import model.ContactModel;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import static java.lang.Character.isDigit;
 
 public class AddContact extends JFrame {
+
+    private final ContactsController contactsController;
 
     /*public static void main(String[] args) {
         JFrame frame = new JFrame("AddContact");
@@ -44,13 +47,14 @@ public class AddContact extends JFrame {
     public JDateChooser dateChooser;
 
 
-
-    public AddContact() {
+    public AddContact(final ContactsController contactsController) {
         setContentPane(AddContactPanel);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
         setSize(600, 500);
+
+        this.contactsController = contactsController;
 
         //make method for clear text in form
         ClearTextFields();
@@ -74,29 +78,7 @@ public class AddContact extends JFrame {
             goToPreviousForm();
 
         });
-        phoneNumberTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //filtrare ta koumpia pou patiountai
-                //TODO: na grafontai mexri 10 noumera
-
-                /*String value = phoneNumberTextField.getText();
-                int length = value.length();
-                if (length >= 10) {
-                    phoneNumberTextField.setEditable(false);
-                } else {
-                    phoneNumberTextField.setEditable(true);
-                }
-
-                if (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') {
-                    phoneNumberTextField.setEditable(true);
-                } else {
-                    phoneNumberTextField.setEditable(false);
-                }*/
-                super.keyPressed(e);
-            }
-
-        });
+        //phoneNumberTextField.addKeyListener(new );
 
 
         emailTextField.addFocusListener(new FocusAdapter() {
@@ -125,6 +107,34 @@ public class AddContact extends JFrame {
         });*/
 
 
+        formattedTextField1.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+            }
+        });
+    }
+
+    private void doSomething() {
+        //filtrare ta koumpia pou patiountai
+        //TODO: na grafontai mexri 10 noumera
+
+                /*String value = phoneNumberTextField.getText();
+                int length = value.length();
+                if (length >= 10) {
+                    phoneNumberTextField.setEditable(false);
+                } else {
+                    phoneNumberTextField.setEditable(true);
+                }
+
+                if (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') {
+                    phoneNumberTextField.setEditable(true);
+                } else {
+                    phoneNumberTextField.setEditable(false);
+                }*/
+        //super.keyPressed(e);
+
+
     }
 
     private void setPhoneNumberText() {
@@ -133,7 +143,7 @@ public class AddContact extends JFrame {
     }
 
     private void goToPreviousForm() {
-        new ContactList();
+        new ContactList(contactsController);
         this.setVisible(false);
         this.dispose();
     }
@@ -248,6 +258,13 @@ public class AddContact extends JFrame {
         AddContactPanel.add(jpCalendar, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         formattedTextField1 = new JFormattedTextField();
         AddContactPanel.add(formattedTextField1, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        label1.setLabelFor(nameTextField);
+        label2.setLabelFor(surnameTextField);
+        label4.setLabelFor(phoneNumberTextField);
+        label5.setLabelFor(emailTextField);
+        label6.setLabelFor(addressTextField);
+        label7.setLabelFor(cityTextField);
+        label8.setLabelFor(notesTextArea);
     }
 
     /**
