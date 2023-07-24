@@ -4,6 +4,10 @@ import model.ContactModel;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,34 +61,28 @@ public class ContactsController implements AutoCloseable {
 
                 contacts.add(new ContactModel(id,name, surname, dateOfBirth, phoneNumber,email,address,city,notes));
 
-                JOptionPane.showMessageDialog(null, id +" "+ name +" "+ surname +" "+ dateOfBirth +" "+ phoneNumber +" "+ email +" "+ address +" "+ city +" "+ notes , "InfoBox: Title" , JOptionPane.INFORMATION_MESSAGE);
-
             }
-        //TODO: put whole list into table of Contact List
-
-//            for(ContactModel ContactModel : contacts){
-//            }
 
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return new ArrayList<>();
+        return contacts;
     }
 
     public ContactModel save(ContactModel contactModel) {
+        //check if textboxes have text in them
+        final String name = contactModel.getName().isEmpty() ? "-" : contactModel.getName();
+        final String surname= contactModel.getSurname().isEmpty() ? "-" : contactModel.getSurname();
+        final String dateOfBirth = contactModel.getDateOfBirth();
+        final String phoneNumber = contactModel.getPhoneNumber().isBlank() ? "-" : contactModel.getPhoneNumber();
+        final String email = contactModel.getEmail().isEmpty() ? "-" : contactModel.getEmail();
+        final String address = contactModel.getAddress().isEmpty() ? "-" : contactModel.getAddress();
+        final String city = contactModel.getCity().isEmpty() ? "-" : contactModel.getCity();
+        final String notes = contactModel.getNotes().isEmpty() ? "-" : contactModel.getNotes();
 
-        String name = null;
-        String surname= null;
-        String dateOfBirth = null;
-        String phoneNumber = null;
-        String email = null;
-        String address = null;
-        String city = null;
-        String notes = null;
 
-        //TODO: check if textboxes have text in them
         //contactModel.getName()= " " ? name = "-" : name = nameText  ;
         //surnameText= "" ? surname = "-" :surname = surnameText;
 
@@ -114,15 +112,39 @@ public class ContactsController implements AutoCloseable {
         return contactModel;
     }
 
-    public List<ContactModel> insertFromFile(File fileFromUser){
-
-        //TODO: read file
-        //TODO: break whole text into pieces
-        //TODO: put pieces into list
-        //TODO: open next form (Contact List)
-        //TODO: refresh table in Contact List
+    public List<ContactModel> insertFromFile(final File fileFromUser){
+        try {
+            final Path pathFromUser = fileFromUser.toPath();
+            final List<String> records = Files.readAllLines(pathFromUser);
+            final List<ContactModel> contacts = new ArrayList<>();
+            for (String record : records) {
+                if(record.isBlank()) {
+                    continue;
+                }
+                final ContactModel contact = ContactModel.fromFileRecord(record);
+                save(contact);
+                contacts.add(contact);
+            }
+            return contacts;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return new ArrayList<>();
+    }
+
+    public void exportToFile(final File fileFromUser) throws IOException {
+        final List<String> contacts = new ArrayList<>();
+        for (ContactModel contact : this.getAll()) {
+            final String contactRecordWithNewLineSuffix = contact.toFileRecord() + "\n";
+            contacts.add(contactRecordWithNewLineSuffix);
+        }
+
+        final FileWriter fileWriter = new FileWriter(fileFromUser);
+        for (String contact : contacts) {
+            fileWriter.append(contact);
+        }
+        fileWriter.close();
     }
 
     @Override

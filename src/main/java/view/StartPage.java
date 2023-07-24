@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import config.DBConfig;
 import controller.ContactsController;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -31,6 +30,7 @@ public class StartPage extends JFrame {
 
         this.contactsController = contactsController;
 
+
         letsStartButton.addActionListener(e -> openNextForm());
 
         browseButton.addActionListener(e -> chooseFileFromUser());
@@ -45,7 +45,7 @@ public class StartPage extends JFrame {
     private void chooseFileFromUser() {
         //open window dialog to search for file to upload
         final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setAcceptAllFileFilterUsed(false); //shows only files of .txt
         fileChooser.setFileFilter(new FileNameExtensionFilter("Text File", "txt", "text"));
         final int response = fileChooser.showOpenDialog(null); //select file to open
         if (response != JFileChooser.APPROVE_OPTION) {
@@ -69,6 +69,12 @@ public class StartPage extends JFrame {
 
     public static void main(String[] args) throws SQLException {
         final ContactsController contactsController = new ContactsController(DBConfig.connectionString);
+        try {
+            contactsController.deleteAll();
+            contactsController.resetAutoIncrement();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
         new StartPage(contactsController);
     }
 

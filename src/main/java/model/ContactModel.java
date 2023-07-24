@@ -1,5 +1,8 @@
 package model;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ContactModel {
     private Integer id;
     private String name;
@@ -98,5 +101,39 @@ public class ContactModel {
         this.notes = notes;
     }
 
-    //TODO: make a list of strings for txt file
+    public String toFileRecord() {
+        final List<String> contactFields = Arrays.asList(
+                id.toString(),
+                name,
+                surname,
+                dateOfBirth,
+                phoneNumber,
+                email,
+                address,
+                city,
+                notes
+        );
+
+        final StringBuilder record = new StringBuilder();
+        for (String field : contactFields) {
+            record.append(field).append(";");
+        }
+
+        return record.toString();
+    }
+
+    public static ContactModel fromFileRecord(final String record) {
+        final String[] fields = record.split(";");
+        return new ContactModel(
+                0,
+                fields[1],
+                fields[2],
+                fields[3],
+                fields[4],
+                fields[5],
+                fields[6],
+                fields[7],
+                fields[8]
+        );
+    }
 }

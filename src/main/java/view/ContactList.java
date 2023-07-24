@@ -11,16 +11,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ContactList extends JFrame {
     private JPanel ContactListPanel;
     private JButton addContactButton;
     private JTable contactsTable;
     private JButton exportDataButton;
+    private JScrollPane tableScrollPane;
+    private JButton exitButton;
 
     private final ContactsController contactsController;
 
@@ -33,75 +34,100 @@ public class ContactList extends JFrame {
         setSize(700, 600);
 
         this.contactsController = contactsController;
+
+        //load data from db
         this.loadDataToView();
-        //TODO: load data from db
 
         addContactButton.addActionListener(e -> {
             //open next form (Add Contact)
             openNextForm();
         });
         exportDataButton.addActionListener(e -> {
-            //open window dialog so that user will choose where to save the file
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Text File", "txt", "text"));
-            int response = fileChooser.showSaveDialog(null);
-            //TODO: suggest a file name to user
-            if (response == JFileChooser.APPROVE_OPTION) {
-                //TODO: if file exists, delete it to replace it
-                File file = new File(fileChooser.getSelectedFile().getAbsolutePath());
-                try {
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                //File filename = new File(fileChooser.getSelectedFile().getAbsoluteFile().toString());
-              /* try{
-                   Files.deleteIfExists(Path.of(file));
-               }catch (NoSuchFileException e){
-
-               }*/
-           /* boolean exists = file.exists();
-            if (exists){
-                file.delete();
-            }else{
-
-            }*/
-
-
+            final Optional<File> userDefinedFile = getUserDefinedFile();
+            if (userDefinedFile.isEmpty()) {
+                return;
             }
             //export all data from db to txt file
-            try {
-                FileWriter fileWriter = new FileWriter(fileChooser.getName());
-                //TODO: write all data from db to file
-                fileWriter.close();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-
+            writeDataOnFile(userDefinedFile.get());
         });
+        exitButton.addActionListener(e -> {
+            System.exit(0);
+        });
+    }
 
+    private void writeDataOnFile(File file) {
+        try {
+            this.contactsController.exportToFile(file);
+            //Show a pop-up (success msg)
+            JOptionPane.showMessageDialog(this, "Your file was saved", "Message", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Optional<File> getUserDefinedFile() {
+        // open window dialog so that user will choose where to save the file
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false); //shows only files of .txt
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text File", "txt", "text"));
+        int response = fileChooser.showSaveDialog(null);
+
+        if (response != JFileChooser.APPROVE_OPTION) {
+            return Optional.empty();
+        }
+
+        final File file = new File(fileChooser.getSelectedFile().getAbsolutePath() + ".txt");
+
+        if (file.exists()) {
+            boolean fileIsDeletedSuccessfully = file.delete();
+            if (!(fileIsDeletedSuccessfully)) {
+                return Optional.empty();
+            }
+        }
+
+        try {
+            final boolean fileIsCreatedSuccessfully = file.createNewFile();
+            if (fileIsCreatedSuccessfully) {
+                return Optional.of(file);
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return Optional.empty();
     }
 
     private void loadDataToView() {
         final List<ContactModel> contacts = this.contactsController.getAll();
 
-        final String[] dataOfRow = new String[]{"id", "name"};
+        final String[] dataOfRow = new String[]{
+                "ID", "Name", "Surname", "Date Of Birth", "Phone Number", "Email", "Address", "City", "Notes"
+        };
 
-        final List<Object[]> data = new ArrayList<>();
-        data.add(new Object[]{"1", "LalakisGR"});
-        data.add(new Object[]{"1", "LalakisGR"});
-        data.add(new Object[]{"1", "LalakisGR"});
-        data.add(new Object[]{"1", "LalakisGR"});
-        for (final ContactModel contact : contacts) {
-            final Integer id = contact.getId();
-            final String name = contact.getName();
+        DefaultTableModel model = (DefaultTableModel) contactsTable.getModel();
+        model.setColumnIdentifiers(dataOfRow);
 
-            data.add(new Object[]{id, name});
+        for (ContactModel contact : contacts) {
+            Object[] row = new Object[]{
+                    contact.getId(),
+                    contact.getName(),
+                    contact.getSurname(),
+                    contact.getDateOfBirth(),
+                    contact.getPhoneNumber(),
+                    contact.getEmail(),
+                    contact.getAddress(),
+                    contact.getCity(),
+                    contact.getNotes()
+            };
+            model.addRow(row);
         }
 
-        final Object[][] dataArray = data.toArray(Object[][]::new);
+        /*final Object[][] dataArray = data.toArray(Object[][]::new);
         final DefaultTableModel defaultTableModel = new DefaultTableModel(dataArray, dataOfRow);
-        contactsTable.setModel(defaultTableModel);
+        contactsTable.setModel(defaultTableModel);*/
+
+        //contactsTable = new JTable(data,dataOfRow);
     }
 
     private void openNextForm() {
@@ -126,17 +152,23 @@ public class ContactList extends JFrame {
      */
     private void $$$setupUI$$$() {
         ContactListPanel = new JPanel();
-        ContactListPanel.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
+        ContactListPanel.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         addContactButton = new JButton();
         addContactButton.setText("Add Contact");
         ContactListPanel.add(addContactButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         ContactListPanel.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        contactsTable = new JTable();
-        ContactListPanel.add(contactsTable, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         exportDataButton = new JButton();
         exportDataButton.setText("Export Data");
         ContactListPanel.add(exportDataButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        tableScrollPane = new JScrollPane();
+        tableScrollPane.setHorizontalScrollBarPolicy(30);
+        ContactListPanel.add(tableScrollPane, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        contactsTable = new JTable();
+        tableScrollPane.setViewportView(contactsTable);
+        exitButton = new JButton();
+        exitButton.setText("Exit");
+        ContactListPanel.add(exitButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
