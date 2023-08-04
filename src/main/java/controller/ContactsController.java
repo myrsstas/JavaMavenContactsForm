@@ -2,7 +2,6 @@ package controller;
 
 import model.ContactModel;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,8 +18,6 @@ public class ContactsController implements AutoCloseable {
     public ContactsController(final String connString) throws SQLException {
         // create a connection to the database
         connection = DriverManager.getConnection(connString);
-        //connection.Open();-> den uparxei
-        //Statement query = connection.createStatement();
 
     }
 

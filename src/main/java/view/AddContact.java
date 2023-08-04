@@ -47,7 +47,7 @@ public class AddContact extends JFrame {
         this.contactsController = contactsController;
 
         SetCalendar();
-        //make method for clear text in form
+        //method for clear text in form
         ClearTextFields();
         setPhoneNumberTextField();
 
@@ -114,13 +114,12 @@ public class AddContact extends JFrame {
         final String todayAsString = dateFormat.format(new Date());
         final boolean isTodayBirthDate = dateOfBirth.contentEquals(todayAsString);
         final String dateOfBirthToSave = (isTodayBirthDate) ? "-" : dateOfBirth;
-
         final String phonenumberText = phoneNumberFormattedField.getText();
         final String emailText = emailTextField.getText();
         final String addressText = addressTextField.getText();
         final String cityText = cityTextField.getText();
         final String notesText = notesTextArea.getText();
-        JOptionPane.showMessageDialog(null, "date selected " + dateOfBirthToSave);
+
         return new ContactModel(null, nameText, surnameText, dateOfBirthToSave, phonenumberText, emailText, addressText, cityText, notesText);
     }
 

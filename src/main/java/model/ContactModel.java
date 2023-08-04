@@ -86,8 +86,6 @@ public class ContactModel {
         this.notes = notes;
     }
 
-    public ContactModel() {
-    }
 
     public ContactModel(Integer id, String name, String surname, String dateOfBirth, String phoneNumber, String email, String address, String city, String notes) {
         this.id = id;
