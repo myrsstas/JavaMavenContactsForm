@@ -26,8 +26,6 @@ public class ContactsController implements AutoCloseable {
 
         final PreparedStatement ps = connection.prepareStatement(query);
         ps.executeUpdate();
-        //statement.executeQuery(query);
-
     }
 
     public void resetAutoIncrement() throws SQLException {
@@ -35,14 +33,13 @@ public class ContactsController implements AutoCloseable {
 
         final PreparedStatement ps = connection.prepareStatement(query);
         ps.executeUpdate();
-        //statement.executeQuery(query);
     }
 
     public List<ContactModel> getAll() {
         List<ContactModel> contacts = new ArrayList<ContactModel>();
         try {
             String query = "SELECT * FROM contacts";
-            final Statement statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while(resultSet.next()){
 
@@ -57,14 +54,11 @@ public class ContactsController implements AutoCloseable {
                 String notes = resultSet.getString("notes");
 
                 contacts.add(new ContactModel(id,name, surname, dateOfBirth, phoneNumber,email,address,city,notes));
-
             }
-
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return contacts;
     }
 
@@ -80,12 +74,10 @@ public class ContactsController implements AutoCloseable {
         final String notes = contactModel.getNotes().isEmpty() ? "-" : contactModel.getNotes();
 
 
-        //contactModel.getName()= " " ? name = "-" : name = nameText  ;
-        //surnameText= "" ? surname = "-" :surname = surnameText;
-
         String query = "insert into contacts (name, surname, date_of_birth, phone_number, email, address, city, notes)  values(?, ?, ?, ?, ?, ?, ?, ?  )";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
+            //match data put by the user into each field for the query
             ps.setString(1,name);
             ps.setString(2,surname);
             ps.setString(3,dateOfBirth);
@@ -94,9 +86,6 @@ public class ContactsController implements AutoCloseable {
             ps.setString(6,address);
             ps.setString(7,city);
             ps.setString(8,notes);
-
-//            this.statement = connection.createStatement();
-//            ResultSet resultSet = statement.executeQuery(query);
 
             ps.executeUpdate();
 
@@ -109,16 +98,16 @@ public class ContactsController implements AutoCloseable {
         return contactModel;
     }
 
-    public List<ContactModel> insertFromFile(final File fileFromUser){
+    public List<ContactModel> insertFromFile(File fileFromUser){
         try {
-            final Path pathFromUser = fileFromUser.toPath();
-            final List<String> records = Files.readAllLines(pathFromUser);
-            final List<ContactModel> contacts = new ArrayList<>();
+            Path pathFromUser = fileFromUser.toPath();
+            List<String> records = Files.readAllLines(pathFromUser);
+            List<ContactModel> contacts = new ArrayList<>();
             for (String record : records) {
                 if(record.isBlank()) {
                     continue;
                 }
-                final ContactModel contact = ContactModel.fromFileRecord(record);
+                ContactModel contact = ContactModel.fromFileRecord(record);
                 save(contact);
                 contacts.add(contact);
             }
@@ -130,14 +119,14 @@ public class ContactsController implements AutoCloseable {
         return new ArrayList<>();
     }
 
-    public void exportToFile(final File fileFromUser) throws IOException {
-        final List<String> contacts = new ArrayList<>();
+    public void exportToFile(File fileFromUser) throws IOException {
+        List<String> contacts = new ArrayList<>();
         for (ContactModel contact : this.getAll()) {
-            final String contactRecordWithNewLineSuffix = contact.toFileRecord() + "\n";
+            String contactRecordWithNewLineSuffix = contact.toFileRecord() + "\n";
             contacts.add(contactRecordWithNewLineSuffix);
         }
 
-        final FileWriter fileWriter = new FileWriter(fileFromUser);
+        FileWriter fileWriter = new FileWriter(fileFromUser);
         for (String contact : contacts) {
             fileWriter.append(contact);
         }

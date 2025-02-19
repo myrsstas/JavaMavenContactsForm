@@ -51,9 +51,7 @@ public class AddContact extends JFrame {
         ClearTextFields();
         setPhoneNumberTextField();
 
-
         nextEntryButton.addActionListener(e -> {
-
             //get all contact details
             ContactModel contactDetails = getContactDetails();
             //pass info to controller for insert sql query
@@ -91,6 +89,7 @@ public class AddContact extends JFrame {
     private void setPhoneNumberTextField() {
         final MaskFormatter formatter;
         try {
+            //format for 10digit number
             formatter = new MaskFormatter("##########");
             this.phoneNumberFormattedField.setFormatterFactory(new DefaultFormatterFactory(formatter));
         } catch (ParseException e) {
@@ -106,19 +105,19 @@ public class AddContact extends JFrame {
 
 
     private ContactModel getContactDetails() {
-        final String nameText = nameTextField.getText();
-        final String surnameText = surnameTextField.getText();
+        String nameText = nameTextField.getText();
+        String surnameText = surnameTextField.getText();
         //get date from calendar
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        final String dateOfBirth = dateFormat.format(dateChooser.getDate());
-        final String todayAsString = dateFormat.format(new Date());
-        final boolean isTodayBirthDate = dateOfBirth.contentEquals(todayAsString);
-        final String dateOfBirthToSave = (isTodayBirthDate) ? "-" : dateOfBirth;
-        final String phonenumberText = phoneNumberFormattedField.getText();
-        final String emailText = emailTextField.getText();
-        final String addressText = addressTextField.getText();
-        final String cityText = cityTextField.getText();
-        final String notesText = notesTextArea.getText();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateOfBirth = dateFormat.format(dateChooser.getDate());
+        String todayAsString = dateFormat.format(new Date());
+        boolean isTodayBirthDate = dateOfBirth.contentEquals(todayAsString);
+        String dateOfBirthToSave = (isTodayBirthDate) ? "-" : dateOfBirth;
+        String phonenumberText = phoneNumberFormattedField.getText();
+        String emailText = emailTextField.getText();
+        String addressText = addressTextField.getText();
+        String cityText = cityTextField.getText();
+        String notesText = notesTextArea.getText();
 
         return new ContactModel(null, nameText, surnameText, dateOfBirthToSave, phonenumberText, emailText, addressText, cityText, notesText);
     }
@@ -198,9 +197,10 @@ public class AddContact extends JFrame {
         label8.setText("Notes : ");
         AddContactPanel.add(label8, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         notesTextArea = new JTextArea();
+        notesTextArea.setText("");
         AddContactPanel.add(notesTextArea, new GridConstraints(7, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(200, 100), null, 0, false));
         nextEntryButton = new JButton();
-        nextEntryButton.setText("Next Entry ");
+        nextEntryButton.setText("Submit and Enter Next Entry ");
         AddContactPanel.add(nextEntryButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         backToListButton = new JButton();
         backToListButton.setText("Back To List");

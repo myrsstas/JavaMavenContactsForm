@@ -11,9 +11,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 public class StartPage extends JFrame {
-
     private final ContactsController contactsController;
-
     private JButton letsStartButton;
     private JTextField uploadedFilePath;
     private JButton browseButton;
@@ -29,7 +27,6 @@ public class StartPage extends JFrame {
         setVisible(true);
 
         this.contactsController = contactsController;
-
 
         letsStartButton.addActionListener(e -> openNextForm());
 

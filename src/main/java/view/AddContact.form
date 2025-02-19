@@ -125,14 +125,16 @@
             <preferred-size width="200" height="100"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <text value=""/>
+        </properties>
       </component>
       <component id="2d350" class="javax.swing.JButton" binding="nextEntryButton">
         <constraints>
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Next Entry "/>
+          <text value="Submit and Enter Next Entry "/>
         </properties>
       </component>
       <component id="3d825" class="javax.swing.JButton" binding="backToListButton" default-binding="true">

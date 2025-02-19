@@ -5,7 +5,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import controller.ContactsController;
 import model.ContactModel;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -99,9 +98,9 @@ public class ContactList extends JFrame {
     }
 
     private void loadDataToView() {
-        final List<ContactModel> contacts = this.contactsController.getAll();
+        List<ContactModel> contacts = this.contactsController.getAll();
 
-        final String[] dataOfRow = new String[]{
+        String[] dataOfRow = new String[]{
                 "ID", "Name", "Surname", "Date Of Birth", "Phone Number", "Email", "Address", "City", "Notes"
         };
 
@@ -123,11 +122,6 @@ public class ContactList extends JFrame {
             model.addRow(row);
         }
 
-        /*final Object[][] dataArray = data.toArray(Object[][]::new);
-        final DefaultTableModel defaultTableModel = new DefaultTableModel(dataArray, dataOfRow);
-        contactsTable.setModel(defaultTableModel);*/
-
-        //contactsTable = new JTable(data,dataOfRow);
     }
 
     private void openNextForm() {
@@ -162,7 +156,7 @@ public class ContactList extends JFrame {
         exportDataButton.setText("Export Data");
         ContactListPanel.add(exportDataButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tableScrollPane = new JScrollPane();
-        tableScrollPane.setHorizontalScrollBarPolicy(30);
+        tableScrollPane.setHorizontalScrollBarPolicy(31);
         ContactListPanel.add(tableScrollPane, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         contactsTable = new JTable();
         tableScrollPane.setViewportView(contactsTable);
